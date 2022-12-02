@@ -10,8 +10,45 @@ const gpa = util.gpa;
 
 const data = @embedFile("data/day01.txt");
 
+const Elf = struct { index: usize, calories: i64 };
+
 pub fn main() !void {
-    
+    var lines = split(u8, data, "\n");
+
+    var elf_count: usize = 1;
+    var elves_list = List(Elf).init(gpa);
+    var acc_calories: i64 = 0;
+    var final_elf: usize = 1;
+    var max_calories: i64 = 0;
+
+    while (lines.next()) |line| {
+        if (line.len != 0) {
+            acc_calories += try parseInt(i64, line, 10);
+        } else {
+            if (max_calories < acc_calories) {
+                max_calories = acc_calories;
+                final_elf = elf_count;
+            }
+            try elves_list.append(Elf{ .index = elf_count, .calories = acc_calories });
+            acc_calories = 0;
+            elf_count += 1;
+        }
+    }
+
+    const elfDesc = (struct {
+        fn elfDesc(context: void, a: Elf, b: Elf) bool {
+            _ = context;
+            return a.calories > b.calories;
+        }
+    }).elfDesc;
+
+    var elves = elves_list.items;
+    const dupes = try gpa.dupe(Elf, elves);
+    sort(Elf, dupes, {}, comptime elfDesc);
+
+    var top_three = dupes[0].calories + dupes[1].calories + dupes[2].calories;
+    std.debug.print("part 1: {d}\n", .{max_calories});
+    std.debug.print("part 2: {d}\n", .{top_three});
 }
 
 // Useful stdlib functions
