@@ -10,8 +10,79 @@ const gpa = util.gpa;
 
 const data = @embedFile("data/day04.txt");
 
+fn part1() !void {
+    var lines = split(u8, data, "\n");
+    var solution: u64 = 0;
+
+    while (lines.next()) |line| {
+        if (line.len == 0) {
+            break;
+        }
+
+        var sections = split(u8, line, ",");
+
+        var first_section = sections.next();
+        var first_ids = split(u8, first_section.?, "-");
+
+        var first_start = try parseInt(u32, first_ids.next().?, 10);
+        var first_end = try parseInt(u32, first_ids.next().?, 10);
+
+        var second_section = sections.next();
+        var second_ids = split(u8, second_section.?, "-");
+
+        var second_start = try parseInt(u32, second_ids.next().?, 10);
+        var second_end = try parseInt(u32, second_ids.next().?, 10);
+
+        if (first_start <= second_start and first_end >= second_end) {
+            solution += 1;
+        } else if (second_start <= first_start and second_end >= first_end) {
+            solution += 1;
+        }
+    }
+
+    std.debug.print("part 1: {d}\n", .{solution});
+}
+
+fn part2() !void {
+    var lines = split(u8, data, "\n");
+    var solution: u64 = 0;
+
+    while (lines.next()) |line| {
+        if (line.len == 0) {
+            break;
+        }
+
+        var sections = split(u8, line, ",");
+
+        var first_section = sections.next();
+        var first_ids = split(u8, first_section.?, "-");
+
+        var first_start = try parseInt(u32, first_ids.next().?, 10);
+        var first_end = try parseInt(u32, first_ids.next().?, 10);
+
+        var second_section = sections.next();
+        var second_ids = split(u8, second_section.?, "-");
+
+        var second_start = try parseInt(u32, second_ids.next().?, 10);
+        var second_end = try parseInt(u32, second_ids.next().?, 10);
+
+        if (first_start <= second_start and first_end >= second_end) {
+            solution += 1;
+        } else if (second_start <= first_start and second_end >= first_end) {
+            solution += 1;
+        } else if (first_end >= second_start and first_start < second_start) {
+            solution += 1;
+        } else if (first_start <= second_end and second_start < first_start) {
+            solution += 1;
+        }
+    }
+
+    std.debug.print("part 2: {d}", .{solution});
+}
+
 pub fn main() !void {
-    
+    try part1();
+    try part2();
 }
 
 // Useful stdlib functions
